@@ -200,14 +200,61 @@ function resolveReportRange(dateFromValue, dateToValue) {
   };
 }
 
-function calculateCriticalDurations(points, dayStart, dayEnd) {
+function estimateExpectedIntervalMs(points) {
+  const diffs = [];
+
+  for (let index = 1; index < points.length; index += 1) {
+    const diff = points[index].createdAt - points[index - 1].createdAt;
+
+    if (diff > 0) {
+      diffs.push(diff);
+    }
+  }
+
+  if (!diffs.length) {
+    return 10_000;
+  }
+
+  diffs.sort((left, right) => left - right);
+  return diffs[Math.floor(diffs.length / 2)];
+}
+
+function calculateTrackedDurations(points, dayStart, dayEnd) {
   let coldDurationMs = 0;
   let hotDurationMs = 0;
+  let normalDurationMs = 0;
+  let noDataDurationMs = 0;
+
+  if (dayEnd <= dayStart) {
+    return {
+      coldDurationMs,
+      hotDurationMs,
+      normalDurationMs,
+      noDataDurationMs
+    };
+  }
+
+  if (!points.length) {
+    return {
+      coldDurationMs,
+      hotDurationMs,
+      normalDurationMs,
+      noDataDurationMs: dayEnd - dayStart
+    };
+  }
+
+  const expectedIntervalMs = estimateExpectedIntervalMs(points);
+  const activeWindowMs = Math.max(expectedIntervalMs * 2, expectedIntervalMs + 5_000);
+  const firstPoint = points[0];
+
+  if (firstPoint && firstPoint.createdAt > dayStart) {
+    noDataDurationMs += Math.min(firstPoint.createdAt, dayEnd) - dayStart;
+  }
 
   for (let index = 0; index < points.length; index += 1) {
     const currentPoint = points[index];
 
-    if (!currentPoint || typeof currentPoint.temperature !== "number") {
+    if (!currentPoint) {
       continue;
     }
 
@@ -219,18 +266,30 @@ function calculateCriticalDurations(points, dayStart, dayEnd) {
       continue;
     }
 
-    const intervalDuration = intervalEnd - intervalStart;
+    const activeIntervalEnd = Math.min(intervalEnd, intervalStart + activeWindowMs);
+    const activeDuration = Math.max(0, activeIntervalEnd - intervalStart);
+    const noDataDuration = intervalEnd - activeIntervalEnd;
 
-    if (currentPoint.temperature < TOO_COLD_TEMPERATURE) {
-      coldDurationMs += intervalDuration;
-    } else if (currentPoint.temperature > TOO_HOT_TEMPERATURE) {
-      hotDurationMs += intervalDuration;
+    if (typeof currentPoint.temperature === "number" && activeDuration > 0) {
+      if (currentPoint.temperature < TOO_COLD_TEMPERATURE) {
+        coldDurationMs += activeDuration;
+      } else if (currentPoint.temperature > TOO_HOT_TEMPERATURE) {
+        hotDurationMs += activeDuration;
+      } else {
+        normalDurationMs += activeDuration;
+      }
+    }
+
+    if (noDataDuration > 0) {
+      noDataDurationMs += noDataDuration;
     }
   }
 
   return {
     coldDurationMs,
-    hotDurationMs
+    hotDurationMs,
+    normalDurationMs,
+    noDataDurationMs
   };
 }
 
@@ -245,7 +304,11 @@ function buildDailyReport(dateFromValue, dateToValue) {
     .map((point) => point.temperature)
     .filter((value) => typeof value === "number");
   const sum = values.reduce((total, value) => total + value, 0);
-  const { coldDurationMs, hotDurationMs } = calculateCriticalDurations(points, rangeStart, rangeEnd);
+  const { coldDurationMs, hotDurationMs, normalDurationMs, noDataDurationMs } = calculateTrackedDurations(
+    points,
+    rangeStart,
+    rangeEnd
+  );
 
   return {
     dateFrom: formatDateKey(resolvedRange.from),
@@ -258,6 +321,8 @@ function buildDailyReport(dateFromValue, dateToValue) {
     avg: values.length ? Number((sum / values.length).toFixed(2)) : null,
     coldDurationMs,
     hotDurationMs,
+    normalDurationMs,
+    noDataDurationMs,
     tooColdThreshold: TOO_COLD_TEMPERATURE,
     tooHotThreshold: TOO_HOT_TEMPERATURE,
     points
@@ -304,7 +369,9 @@ function buildTelegramReportMessage(report) {
     `Max: ${formatTemperatureForTelegram(report.max)} C`,
     `Avg: ${formatTemperatureForTelegram(report.avg)} C`,
     `Below ${report.tooColdThreshold} C: ${formatDurationForTelegram(report.coldDurationMs)}`,
+    `Normal ${report.tooColdThreshold}-${report.tooHotThreshold} C: ${formatDurationForTelegram(report.normalDurationMs)}`,
     `Above ${report.tooHotThreshold} C: ${formatDurationForTelegram(report.hotDurationMs)}`,
+    `No data: ${formatDurationForTelegram(report.noDataDurationMs)}`,
     `Updated: ${formatTimestampForTelegram(state.syncedAt)}`,
     `Source: ${state.source}`
   ].join("\n");

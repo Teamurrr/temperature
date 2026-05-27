@@ -1,10 +1,10 @@
 {
   "latest": {
     "id": "esp32",
-    "temperature": 28.94,
+    "temperature": 26.37,
     "unit": "C",
     "sensorId": "ESP32",
-    "createdAt": 1779883383000
+    "createdAt": 1779884979000
   },
   "history": [
     {
@@ -10908,8 +10908,1220 @@
       "createdAt": 1779883383000,
       "unit": "C",
       "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.69,
+      "createdAt": 1779883390000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.56,
+      "createdAt": 1779883398000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.38,
+      "createdAt": 1779883406000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.31,
+      "createdAt": 1779883414000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.12,
+      "createdAt": 1779883422000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28,
+      "createdAt": 1779883430000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.75,
+      "createdAt": 1779883438000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.62,
+      "createdAt": 1779883446000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.5,
+      "createdAt": 1779883454000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.38,
+      "createdAt": 1779883462000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.19,
+      "createdAt": 1779883470000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28.12,
+      "createdAt": 1779883478000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 28,
+      "createdAt": 1779883485000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.94,
+      "createdAt": 1779883493000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.81,
+      "createdAt": 1779883501000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.75,
+      "createdAt": 1779883509000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.75,
+      "createdAt": 1779883517000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.62,
+      "createdAt": 1779883525000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.56,
+      "createdAt": 1779883533000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.5,
+      "createdAt": 1779883540000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.44,
+      "createdAt": 1779883548000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.37,
+      "createdAt": 1779883556000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.31,
+      "createdAt": 1779883564000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.25,
+      "createdAt": 1779883572000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.19,
+      "createdAt": 1779883580000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.19,
+      "createdAt": 1779883588000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.13,
+      "createdAt": 1779883596000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.06,
+      "createdAt": 1779883604000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.13,
+      "createdAt": 1779883612000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27.06,
+      "createdAt": 1779883620000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27,
+      "createdAt": 1779883628000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 27,
+      "createdAt": 1779883635000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.94,
+      "createdAt": 1779883643000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.94,
+      "createdAt": 1779883651000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.94,
+      "createdAt": 1779883659000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.94,
+      "createdAt": 1779883667000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.87,
+      "createdAt": 1779883675000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.87,
+      "createdAt": 1779883682000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.87,
+      "createdAt": 1779883690000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.81,
+      "createdAt": 1779883698000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.81,
+      "createdAt": 1779883706000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.75,
+      "createdAt": 1779883714000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.75,
+      "createdAt": 1779883722000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.75,
+      "createdAt": 1779883730000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.75,
+      "createdAt": 1779883738000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.69,
+      "createdAt": 1779883746000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.69,
+      "createdAt": 1779883754000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.69,
+      "createdAt": 1779883762000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.69,
+      "createdAt": 1779883770000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.69,
+      "createdAt": 1779883778000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883786000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883794000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883802000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883809000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883817000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883825000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883833000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883841000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883849000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883857000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883864000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883872000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883880000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883888000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883896000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.62,
+      "createdAt": 1779883903000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883911000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.56,
+      "createdAt": 1779883919000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779883927000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779883935000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779883943000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779883950000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779883958000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779883966000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779883974000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779883982000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779883990000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779883998000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779884005000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779884013000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779884021000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884029000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884036000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884044000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884052000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779884060000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779884068000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884076000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884084000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884092000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884099000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884107000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884115000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884123000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884130000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884138000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884146000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884154000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884162000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884170000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884178000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884186000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.5,
+      "createdAt": 1779884194000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884202000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884209000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884217000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884225000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884233000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884241000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884249000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884256000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884264000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884272000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884280000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884288000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884296000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884304000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884312000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884320000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884327000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884335000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884343000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884351000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884359000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884366000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884374000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884382000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884390000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884398000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884406000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884413000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884421000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884429000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884437000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884445000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884453000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884460000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884468000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.44,
+      "createdAt": 1779884476000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884484000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884492000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884500000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884508000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884516000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884524000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884532000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884539000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884547000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884555000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884563000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884571000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884579000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884587000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884595000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884603000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884611000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884618000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884626000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884634000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884642000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884649000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884657000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884665000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884673000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884681000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884688000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884696000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.25,
+      "createdAt": 1779884704000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884712000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884720000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884728000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884735000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884743000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884751000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884759000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884767000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884775000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884782000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884790000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884798000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884806000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884814000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884822000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884830000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884838000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884845000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884853000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884861000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.37,
+      "createdAt": 1779884869000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884877000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884885000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884892000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884900000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884908000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884916000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.25,
+      "createdAt": 1779884923000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884931000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884939000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.25,
+      "createdAt": 1779884947000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884955000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884963000,
+      "unit": "C",
+      "sensorId": "ESP32"
+    },
+    {
+      "temperature": 26.31,
+      "createdAt": 1779884971000,
+      "unit": "C",
+      "sensorId": "ESP32"
     }
   ],
-  "syncedAt": 1779883385528,
+  "syncedAt": 1779884980958,
   "source": "firebase"
 }

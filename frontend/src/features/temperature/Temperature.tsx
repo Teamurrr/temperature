@@ -53,6 +53,8 @@ type DailyReport = {
   avg: number | null;
   coldDurationMs: number;
   hotDurationMs: number;
+  normalDurationMs: number;
+  noDataDurationMs: number;
   tooColdThreshold: number;
   tooHotThreshold: number;
   points: TemperaturePoint[];
@@ -460,14 +462,56 @@ const sanitizeHistory = (history: Array<TemperaturePoint | null>) =>
     .filter((point): point is TemperaturePoint => Boolean(point && typeof point.createdAt === "number"))
     .sort((left, right) => left.createdAt - right.createdAt);
 
-const calculateCriticalDurations = (points: TemperaturePoint[], rangeStart: number, rangeEnd: number) => {
+const estimateExpectedIntervalMs = (points: TemperaturePoint[]) => {
+  const diffs: number[] = [];
+
+  for (let index = 1; index < points.length; index += 1) {
+    const diff = points[index]!.createdAt - points[index - 1]!.createdAt;
+
+    if (diff > 0) {
+      diffs.push(diff);
+    }
+  }
+
+  if (!diffs.length) {
+    return 10_000;
+  }
+
+  diffs.sort((left, right) => left - right);
+  return diffs[Math.floor(diffs.length / 2)]!;
+};
+
+const calculateTrackedDurations = (points: TemperaturePoint[], rangeStart: number, rangeEnd: number) => {
   let coldDurationMs = 0;
   let hotDurationMs = 0;
+  let normalDurationMs = 0;
+  let noDataDurationMs = 0;
+
+  if (rangeEnd <= rangeStart) {
+    return { coldDurationMs, hotDurationMs, normalDurationMs, noDataDurationMs };
+  }
+
+  if (!points.length) {
+    return {
+      coldDurationMs,
+      hotDurationMs,
+      normalDurationMs,
+      noDataDurationMs: rangeEnd - rangeStart
+    };
+  }
+
+  const expectedIntervalMs = estimateExpectedIntervalMs(points);
+  const activeWindowMs = Math.max(expectedIntervalMs * 2, expectedIntervalMs + 5_000);
+  const firstPoint = points[0];
+
+  if (firstPoint && firstPoint.createdAt > rangeStart) {
+    noDataDurationMs += Math.min(firstPoint.createdAt, rangeEnd) - rangeStart;
+  }
 
   for (let index = 0; index < points.length; index += 1) {
     const currentPoint = points[index];
 
-    if (!currentPoint || typeof currentPoint.temperature !== "number") {
+    if (!currentPoint) {
       continue;
     }
 
@@ -479,16 +523,26 @@ const calculateCriticalDurations = (points: TemperaturePoint[], rangeStart: numb
       continue;
     }
 
-    const intervalDuration = intervalEnd - intervalStart;
+    const activeIntervalEnd = Math.min(intervalEnd, intervalStart + activeWindowMs);
+    const activeDuration = Math.max(0, activeIntervalEnd - intervalStart);
+    const noDataDuration = intervalEnd - activeIntervalEnd;
 
-    if (currentPoint.temperature < TOO_COLD_TEMPERATURE) {
-      coldDurationMs += intervalDuration;
-    } else if (currentPoint.temperature > TOO_HOT_TEMPERATURE) {
-      hotDurationMs += intervalDuration;
+    if (typeof currentPoint.temperature === "number" && activeDuration > 0) {
+      if (currentPoint.temperature < TOO_COLD_TEMPERATURE) {
+        coldDurationMs += activeDuration;
+      } else if (currentPoint.temperature > TOO_HOT_TEMPERATURE) {
+        hotDurationMs += activeDuration;
+      } else {
+        normalDurationMs += activeDuration;
+      }
+    }
+
+    if (noDataDuration > 0) {
+      noDataDurationMs += noDataDuration;
     }
   }
 
-  return { coldDurationMs, hotDurationMs };
+  return { coldDurationMs, hotDurationMs, normalDurationMs, noDataDurationMs };
 };
 
 const buildPeriodReport = (period: ReportPeriod, points: TemperaturePoint[]): ReportData => {
@@ -524,7 +578,7 @@ const buildDateRangeReport = (
     .map((point) => point.temperature)
     .filter((value): value is number => typeof value === "number");
   const sum = values.reduce((total, value) => total + value, 0);
-  const { coldDurationMs, hotDurationMs } = calculateCriticalDurations(
+  const { coldDurationMs, hotDurationMs, normalDurationMs, noDataDurationMs } = calculateTrackedDurations(
     filteredPoints,
     rangeStart,
     rangeEnd
@@ -541,6 +595,8 @@ const buildDateRangeReport = (
     avg: values.length ? Number((sum / values.length).toFixed(2)) : null,
     coldDurationMs,
     hotDurationMs,
+    normalDurationMs,
+    noDataDurationMs,
     tooColdThreshold: TOO_COLD_TEMPERATURE,
     tooHotThreshold: TOO_HOT_TEMPERATURE,
     points: filteredPoints
@@ -1206,6 +1262,16 @@ const Temperature = () => {
                   <article className="temperature-report-metric temperature-report-metric-cold">
                     <span>Время ниже {dailyReport.tooColdThreshold} C</span>
                     <strong>{formatDuration(dailyReport.coldDurationMs)}</strong>
+                  </article>
+                  <article className="temperature-report-metric">
+                    <span>
+                      Время в диапазоне {dailyReport.tooColdThreshold}-{dailyReport.tooHotThreshold} C
+                    </span>
+                    <strong>{formatDuration(dailyReport.normalDurationMs)}</strong>
+                  </article>
+                  <article className="temperature-report-metric">
+                    <span>Время без данных</span>
+                    <strong>{formatDuration(dailyReport.noDataDurationMs)}</strong>
                   </article>
                   <article className="temperature-report-metric temperature-report-metric-hot">
                     <span>Время выше {dailyReport.tooHotThreshold} C</span>
