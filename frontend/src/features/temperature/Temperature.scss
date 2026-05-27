@@ -1,0 +1,815 @@
+.temperature-page {
+  min-height: 100vh;
+  padding: 32px 24px 48px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at top left, rgba(89, 196, 255, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 122, 89, 0.16), transparent 24%),
+    linear-gradient(180deg, #07111f 0%, #0d1b2f 48%, #152945 100%);
+  color: #eff6ff;
+}
+
+.temperature-shell {
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
+
+.temperature-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.temperature-kicker {
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(143, 223, 255, 0.88);
+}
+
+.temperature-header h1 {
+  margin: 0 0 12px;
+  color: #f8fbff;
+  font-size: clamp(40px, 6vw, 68px);
+  line-height: 0.95;
+}
+
+.temperature-subtitle {
+  max-width: 720px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(223, 233, 248, 0.88);
+}
+
+.temperature-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.temperature-refresh-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(151, 201, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fbff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.temperature-refresh-button:hover,
+.temperature-refresh-button:focus-visible {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(151, 201, 255, 0.42);
+}
+
+.temperature-refresh-button:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.temperature-hero-card {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+  padding: 28px;
+  border: 1px solid rgba(159, 205, 255, 0.14);
+  border-radius: 32px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)),
+    rgba(10, 20, 36, 0.72);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(18px);
+}
+
+.temperature-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -60px -60px auto;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(81, 209, 255, 0.28), transparent 68%);
+  pointer-events: none;
+}
+
+.temperature-reading-block {
+  margin-bottom: 24px;
+}
+
+.temperature-reading-label {
+  margin-bottom: 10px;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(223, 233, 248, 0.74);
+}
+
+.temperature-reading {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.temperature-reading strong {
+  font-size: clamp(72px, 16vw, 156px);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: #ffffff;
+}
+
+.temperature-reading span {
+  padding-bottom: 16px;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  color: #8fe0ff;
+}
+
+.temperature-meta-grid,
+.temperature-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.temperature-meta-card,
+.temperature-summary-card {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.temperature-meta-card span,
+.temperature-summary-card span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(223, 233, 248, 0.66);
+}
+
+.temperature-meta-card strong {
+  display: block;
+  font-size: 18px;
+  line-height: 1.45;
+  color: #f8fbff;
+}
+
+.temperature-summary-grid {
+  margin-bottom: 20px;
+}
+
+.temperature-summary-card strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.temperature-report-card {
+  margin-bottom: 20px;
+  padding: 24px;
+  border-radius: 28px;
+  background: rgba(8, 17, 31, 0.72);
+  border: 1px solid rgba(151, 201, 255, 0.12);
+}
+
+.temperature-report-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.temperature-report-header h2 {
+  margin: 0;
+  color: #f8fbff;
+}
+
+.temperature-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.temperature-report-range-picker {
+  position: relative;
+  min-width: 360px;
+}
+
+.temperature-report-range-button {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid rgba(151, 201, 255, 0.22);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fbff;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.temperature-report-range-button:hover,
+.temperature-report-range-button:focus-visible {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(151, 201, 255, 0.4);
+}
+
+.temperature-report-range-label {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(223, 233, 248, 0.68);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.temperature-report-range-value {
+  display: block;
+  font-size: 18px;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+.temperature-report-calendar-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 10;
+  width: min(100vw - 32px, 760px);
+  padding: 18px;
+  border: 1px solid rgba(151, 201, 255, 0.18);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
+    #0b1627;
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(18px);
+}
+
+.temperature-daypicker {
+  --rdp-accent-color: #22c55e;
+  --rdp-accent-background-color: rgba(34, 197, 94, 0.18);
+  --rdp-day_button-border-radius: 14px;
+  --rdp-day_button-width: 42px;
+  --rdp-day_button-height: 42px;
+  --rdp-selected-border: 1px solid rgba(143, 223, 255, 0.25);
+  margin: 0;
+  color: #eff6ff;
+}
+
+.temperature-daypicker .rdp-months {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.temperature-daypicker .rdp-month {
+  padding: 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.temperature-daypicker .rdp-caption_label {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.temperature-daypicker .rdp-weekday {
+  color: rgba(223, 233, 248, 0.62);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.temperature-daypicker .rdp-day_button {
+  color: #f8fbff;
+  font-weight: 600;
+}
+
+.temperature-daypicker .rdp-day_button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.temperature-daypicker .rdp-range_middle .rdp-day_button {
+  background: rgba(143, 223, 255, 0.14);
+  color: #ffffff;
+}
+
+.temperature-daypicker .rdp-range_start .rdp-day_button,
+.temperature-daypicker .rdp-range_end .rdp-day_button,
+.temperature-daypicker .rdp-selected .rdp-day_button {
+  background: linear-gradient(135deg, #22c55e, #0ea5e9);
+  color: #08111f;
+}
+
+.temperature-daypicker .rdp-disabled {
+  opacity: 0.32;
+}
+
+.temperature-report-calendar-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.temperature-report-calendar-action {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(151, 201, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fbff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.temperature-report-calendar-action:hover,
+.temperature-report-calendar-action:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.temperature-report-days-count {
+  margin: 0 0 18px;
+  color: rgba(223, 233, 248, 0.82);
+  font-size: 15px;
+}
+
+.temperature-report-days-count strong {
+  color: #ffffff;
+}
+
+.temperature-report-export {
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.temperature-report-sheet {
+  padding: 24px;
+  border: 1px solid rgba(151, 201, 255, 0.12);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(34, 197, 94, 0.1), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03)),
+    #091423;
+}
+
+.temperature-report-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.temperature-report-sheet-header h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 28px;
+}
+
+.temperature-report-sheet-meta {
+  min-width: 200px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.temperature-report-sheet-meta span,
+.temperature-report-metric span {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(223, 233, 248, 0.68);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.temperature-report-sheet-meta strong,
+.temperature-report-metric strong {
+  display: block;
+  color: #ffffff;
+}
+
+.temperature-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.temperature-report-metric {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.temperature-report-metric strong {
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.temperature-report-grid-critical {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.temperature-report-metric-cold {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.28);
+}
+
+.temperature-report-metric-hot {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+
+.temperature-report-note {
+  margin: 0;
+  color: rgba(223, 233, 248, 0.82);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.temperature-chart-card {
+  margin-bottom: 20px;
+  padding: 24px;
+  border-radius: 28px;
+  background: rgba(8, 17, 31, 0.72);
+  border: 1px solid rgba(151, 201, 255, 0.12);
+  overflow: hidden;
+}
+
+.temperature-chart-header {
+  margin-bottom: 18px;
+}
+
+.temperature-chart-kicker {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(143, 223, 255, 0.88);
+}
+
+.temperature-chart-header h2 {
+  margin: 0;
+  color: #f8fbff;
+}
+
+.temperature-period-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.temperature-period-button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(151, 201, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(238, 246, 255, 0.86);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+  flex: 1 1 140px;
+}
+
+.temperature-period-button:hover,
+.temperature-period-button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(151, 201, 255, 0.36);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.temperature-period-button-active {
+  border-color: rgba(143, 223, 255, 0.52);
+  background: rgba(143, 223, 255, 0.16);
+  color: #ffffff;
+}
+
+.temperature-point-controls {
+  margin-bottom: 18px;
+}
+
+.temperature-point-controls > span {
+  display: block;
+  margin-bottom: 10px;
+  color: rgba(214, 231, 255, 0.72);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.temperature-point-controls .temperature-period-switcher {
+  margin-bottom: 0;
+}
+
+.temperature-chart-wrap {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+}
+
+.temperature-chart {
+  width: 100%;
+  min-width: 700px;
+  height: 320px;
+  display: block;
+}
+
+.temperature-chart-grid {
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1;
+}
+
+.temperature-chart-line {
+  fill: none;
+  stroke: #8fe0ff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.temperature-chart-point {
+  fill: #ffffff;
+  stroke: #8fe0ff;
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.temperature-chart-axis-label {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(223, 233, 248, 0.7);
+}
+
+.temperature-chart-axis-label-y {
+  margin-bottom: 8px;
+}
+
+.temperature-chart-axis-label-x {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.temperature-chart-y-label,
+.temperature-chart-x-label {
+  fill: rgba(223, 233, 248, 0.72);
+  font-size: 12px;
+}
+
+.temperature-chart-tooltip-box {
+  fill: rgba(7, 17, 31, 0.94);
+  stroke: rgba(143, 223, 255, 0.3);
+  stroke-width: 1;
+}
+
+.temperature-chart-tooltip-label {
+  fill: rgba(223, 233, 248, 0.82);
+  font-size: 12px;
+}
+
+.temperature-chart-tooltip-value {
+  fill: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.temperature-chart-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: rgba(223, 233, 248, 0.76);
+}
+
+.temperature-chart-empty {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(223, 233, 248, 0.8);
+}
+
+.temperature-status-card {
+  padding: 20px 24px;
+  border-radius: 24px;
+  background: rgba(8, 17, 31, 0.72);
+  border: 1px solid rgba(151, 201, 255, 0.12);
+}
+
+.temperature-status-text {
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(238, 246, 255, 0.9);
+}
+
+.temperature-status-error {
+  color: #ffb9b9;
+}
+
+@media (max-width: 768px) {
+  .temperature-page {
+    padding: 24px 16px 32px;
+  }
+
+  .temperature-header {
+    flex-direction: column;
+  }
+
+  .temperature-actions {
+    justify-content: flex-start;
+  }
+
+  .temperature-hero-card {
+    padding: 22px;
+    border-radius: 26px;
+  }
+
+  .temperature-report-card,
+  .temperature-chart-card {
+    padding: 22px;
+    border-radius: 26px;
+  }
+
+  .temperature-report-header,
+  .temperature-report-sheet-header {
+    flex-direction: column;
+  }
+
+  .temperature-report-actions {
+    justify-content: flex-start;
+  }
+
+  .temperature-report-range-picker {
+    min-width: min(100%, 420px);
+  }
+
+  .temperature-report-calendar-popover {
+    right: auto;
+    left: 0;
+  }
+
+  .temperature-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 430px) {
+  .temperature-page {
+    padding: 18px 12px 24px;
+  }
+
+  .temperature-header {
+    margin-bottom: 20px;
+    gap: 18px;
+  }
+
+  .temperature-subtitle {
+    font-size: 15px;
+  }
+
+  .temperature-refresh-button {
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+
+  .temperature-hero-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .temperature-reading {
+    gap: 10px;
+  }
+
+  .temperature-reading span {
+    padding-bottom: 10px;
+  }
+
+  .temperature-meta-card,
+  .temperature-summary-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .temperature-summary-card strong {
+    font-size: 24px;
+  }
+
+  .temperature-chart-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .temperature-report-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .temperature-report-sheet {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .temperature-report-range-picker {
+    min-width: 100%;
+  }
+
+  .temperature-report-range-value {
+    font-size: 16px;
+  }
+
+  .temperature-report-calendar-popover {
+    width: min(100vw - 24px, 100%);
+    padding: 14px;
+  }
+
+  .temperature-daypicker .rdp-month {
+    width: 100%;
+  }
+
+  .temperature-report-sheet-header h3 {
+    font-size: 24px;
+  }
+
+  .temperature-report-metric strong {
+    font-size: 24px;
+  }
+
+  .temperature-period-switcher {
+    gap: 8px;
+  }
+
+  .temperature-period-button {
+    min-height: 38px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  .temperature-chart {
+    height: 240px;
+  }
+
+  .temperature-chart-y-label,
+  .temperature-chart-x-label {
+    font-size: 11px;
+  }
+
+  .temperature-chart-footer {
+    font-size: 13px;
+  }
+
+  .temperature-status-card {
+    padding: 16px 18px;
+    border-radius: 18px;
+  }
+
+  .temperature-status-text {
+    font-size: 15px;
+  }
+}
