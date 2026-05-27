@@ -65,6 +65,14 @@ type DailyReportApiResponse = {
   source: string;
 };
 
+type TelegramReportApiResponse = {
+  success: boolean;
+  report: DailyReport;
+  telegramMessageId: number | null;
+  deliveredChats?: number;
+  error?: string;
+};
+
 type ChartTooltip = {
   x: number;
   y: number;
@@ -323,6 +331,35 @@ const normalizeRange = (range: DateRange | undefined) => {
     : { from: safeTo, to: safeFrom };
 };
 
+const buildReportPdf = async (
+  element: HTMLDivElement,
+  report: DailyReport
+): Promise<{ blob: Blob; filename: string }> => {
+  const canvas = await html2canvas(element, {
+    backgroundColor: "#07111f",
+    scale: 2,
+    useCORS: true
+  });
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "pt",
+    format: "a4"
+  });
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 24;
+  const contentWidth = pageWidth - margin * 2;
+  const contentHeight = (canvas.height * contentWidth) / canvas.width;
+  const renderHeight = Math.min(contentHeight, pageHeight - margin * 2);
+
+  pdf.addImage(canvas.toDataURL("image/png"), "PNG", margin, margin, contentWidth, renderHeight);
+
+  return {
+    blob: pdf.output("blob"),
+    filename: `temperature-report-${report.dateFrom}-${report.dateTo}.pdf`
+  };
+};
+
 const Temperature = () => {
   const today = useMemo(() => {
     const value = new Date();
@@ -343,9 +380,12 @@ const Temperature = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isReportLoading, setIsReportLoading] = useState(true);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isSendingTelegramText, setIsSendingTelegramText] = useState(false);
+  const [isSendingTelegramPdf, setIsSendingTelegramPdf] = useState(false);
   const [isRangePickerOpen, setIsRangePickerOpen] = useState(false);
   const [error, setError] = useState("");
   const [reportError, setReportError] = useState("");
+  const [telegramStatus, setTelegramStatus] = useState("");
   const [tooltip, setTooltip] = useState<ChartTooltip | null>(null);
   const [sourceInfo, setSourceInfo] = useState<{ source: string; syncedAt: number | null }>({
     source: "boot",
@@ -420,34 +460,95 @@ const Temperature = () => {
     setIsExportingPdf(true);
 
     try {
-      const canvas = await html2canvas(reportExportRef.current, {
-        backgroundColor: "#07111f",
-        scale: 2,
-        useCORS: true
-      });
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "pt",
-        format: "a4"
-      });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 24;
-      const contentWidth = pageWidth - margin * 2;
-      const contentHeight = (canvas.height * contentWidth) / canvas.width;
-      const renderHeight = Math.min(contentHeight, pageHeight - margin * 2);
+      const { blob, filename } = await buildReportPdf(reportExportRef.current, dailyReport);
+      const url = URL.createObjectURL(blob);
 
-      pdf.addImage(
-        canvas.toDataURL("image/png"),
-        "PNG",
-        margin,
-        margin,
-        contentWidth,
-        renderHeight
-      );
-      pdf.save(`temperature-report-${dailyReport.dateFrom}-${dailyReport.dateTo}.pdf`);
+      try {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
     } finally {
       setIsExportingPdf(false);
+    }
+  };
+
+  const handleSendTelegramTextReport = async () => {
+    if (!dailyReport) {
+      return;
+    }
+
+    setIsSendingTelegramText(true);
+    setTelegramStatus("");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/temperature/send-telegram-report`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          dateFrom: dailyReport.dateFrom,
+          dateTo: dailyReport.dateTo
+        })
+      });
+
+      const payload = (await response.json()) as TelegramReportApiResponse;
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || "Failed to send Telegram text report");
+      }
+
+      const deliveredChatsText =
+        typeof payload.deliveredChats === "number" ? ` (${payload.deliveredChats} chats)` : "";
+      setTelegramStatus(`Сообщение отправлено в Telegram${deliveredChatsText}.`);
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error ? caughtError.message : "Не удалось отправить сообщение в Telegram.";
+      setTelegramStatus(message);
+    } finally {
+      setIsSendingTelegramText(false);
+    }
+  };
+
+  const handleSendTelegramPdfReport = async () => {
+    if (!dailyReport || !reportExportRef.current) {
+      return;
+    }
+
+    setIsSendingTelegramPdf(true);
+    setTelegramStatus("");
+
+    try {
+      const { blob, filename } = await buildReportPdf(reportExportRef.current, dailyReport);
+      const formData = new FormData();
+      formData.append("file", blob, filename);
+      formData.append("dateFrom", dailyReport.dateFrom);
+      formData.append("dateTo", dailyReport.dateTo);
+
+      const response = await fetch(`${API_BASE_URL}/api/temperature/send-telegram-report-pdf`, {
+        method: "POST",
+        body: formData
+      });
+
+      const payload = (await response.json()) as TelegramReportApiResponse;
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || "Failed to send Telegram PDF report");
+      }
+
+      const deliveredChatsText =
+        typeof payload.deliveredChats === "number" ? ` (${payload.deliveredChats} chats)` : "";
+      setTelegramStatus(`PDF отправлен в Telegram${deliveredChatsText}.`);
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error ? caughtError.message : "Не удалось отправить PDF в Telegram.";
+      setTelegramStatus(message);
+    } finally {
+      setIsSendingTelegramPdf(false);
     }
   };
 
@@ -718,6 +819,34 @@ const Temperature = () => {
               <button
                 type="button"
                 className="temperature-refresh-button"
+                onClick={() => void handleSendTelegramTextReport()}
+                disabled={
+                  isReportLoading ||
+                  isExportingPdf ||
+                  isSendingTelegramText ||
+                  isSendingTelegramPdf ||
+                  !dailyReport
+                }
+              >
+                {isSendingTelegramText ? "Отправляем..." : "Отправить сообщением"}
+              </button>
+              <button
+                type="button"
+                className="temperature-refresh-button"
+                onClick={() => void handleSendTelegramPdfReport()}
+                disabled={
+                  isReportLoading ||
+                  isExportingPdf ||
+                  isSendingTelegramText ||
+                  isSendingTelegramPdf ||
+                  !dailyReport
+                }
+              >
+                {isSendingTelegramPdf ? "Отправляем..." : "Отправить PDF"}
+              </button>
+              <button
+                type="button"
+                className="temperature-refresh-button"
                 onClick={() => void handleExportPdf()}
                 disabled={isReportLoading || isExportingPdf || !dailyReport}
               >
@@ -729,6 +858,19 @@ const Temperature = () => {
           <p className="temperature-report-days-count">
             Выбрано дней: <strong>{selectedReportDayCount}</strong>
           </p>
+
+          {telegramStatus ? (
+            <p
+              className={
+                telegramStatus.startsWith("PDF отправлен в Telegram") ||
+                telegramStatus.startsWith("Сообщение отправлено в Telegram")
+                  ? "temperature-status-text"
+                  : "temperature-status-text temperature-status-error"
+              }
+            >
+              {telegramStatus}
+            </p>
+          ) : null}
 
           {isReportLoading ? (
             <p className="temperature-status-text">Формируем отчет...</p>

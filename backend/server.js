@@ -1,7 +1,11 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 const fs = require("node:fs/promises");
+const fsSync = require("node:fs");
 const path = require("node:path");
+const dotenv = require("dotenv");
+const multer = require("multer");
 
 const app = express();
 
@@ -15,6 +19,15 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const TOO_COLD_TEMPERATURE = 22;
 const TOO_HOT_TEMPERATURE = 40;
 const VALID_PERIODS = ["day", "week", "month", "halfYear"];
+const BOT_APP_DIR = path.resolve(__dirname, "..", "tempDodoBot");
+const BOT_ENV_PATH = path.join(BOT_APP_DIR, ".env");
+const BOT_CHATS_PATH = path.join(BOT_APP_DIR, "chats.json");
+
+if (fsSync.existsSync(BOT_ENV_PATH)) {
+  dotenv.config({ path: BOT_ENV_PATH, override: false });
+}
+
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN || "";
 
 const state = {
   latest: null,
@@ -22,6 +35,10 @@ const state = {
   syncedAt: null,
   source: "boot"
 };
+
+const upload = multer({
+  storage: multer.memoryStorage()
+});
 
 app.use(cors());
 app.use(express.json());
@@ -246,6 +263,149 @@ function buildDailyReport(dateFromValue, dateToValue) {
   };
 }
 
+function formatDurationForTelegram(durationMs) {
+  const totalMinutes = Math.max(0, Math.round(durationMs / 60000));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return `${hours}h ${String(minutes).padStart(2, "0")}m`;
+}
+
+function formatTemperatureForTelegram(value) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "n/a";
+  }
+
+  return value.toFixed(2);
+}
+
+function formatTimestampForTelegram(value) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "n/a";
+  }
+
+  return new Date(value).toLocaleString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
+function buildTelegramReportMessage(report) {
+  return [
+    "Temperature report",
+    `Period: ${report.dateFrom} - ${report.dateTo}`,
+    `Measurements: ${report.count}`,
+    `Min: ${formatTemperatureForTelegram(report.min)} C`,
+    `Max: ${formatTemperatureForTelegram(report.max)} C`,
+    `Avg: ${formatTemperatureForTelegram(report.avg)} C`,
+    `Below ${report.tooColdThreshold} C: ${formatDurationForTelegram(report.coldDurationMs)}`,
+    `Above ${report.tooHotThreshold} C: ${formatDurationForTelegram(report.hotDurationMs)}`,
+    `Updated: ${formatTimestampForTelegram(state.syncedAt)}`,
+    `Source: ${state.source}`
+  ].join("\n");
+}
+
+async function readTelegramChatIds() {
+  try {
+    const raw = await fs.readFile(BOT_CHATS_PATH, "utf8");
+    const parsed = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.filter((value) => Number.isInteger(value));
+  } catch {
+    return [];
+  }
+}
+
+async function sendTelegramMessage(chatId, text) {
+  if (!TELEGRAM_BOT_TOKEN) {
+    throw new Error("Telegram bot token is missing. Set TELEGRAM_BOT_TOKEN or BOT_TOKEN.");
+  }
+
+  const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text
+    })
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok || !payload.ok) {
+    throw new Error(payload.description || `Telegram request failed with status ${response.status}`);
+  }
+
+  return payload.result;
+}
+
+async function sendTelegramDocument(chatId, fileBuffer, filename, mimeType, caption) {
+  if (!TELEGRAM_BOT_TOKEN) {
+    throw new Error("Telegram bot token is missing. Set TELEGRAM_BOT_TOKEN or BOT_TOKEN.");
+  }
+
+  const formData = new FormData();
+  formData.append("chat_id", String(chatId));
+  formData.append("document", new Blob([fileBuffer], { type: mimeType }), filename);
+
+  if (caption) {
+    formData.append("caption", caption);
+  }
+
+  const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument`, {
+    method: "POST",
+    body: formData
+  });
+  const payload = await response.json();
+
+  if (!response.ok || !payload.ok) {
+    throw new Error(payload.description || `Telegram request failed with status ${response.status}`);
+  }
+
+  return payload.result;
+}
+
+async function sendTelegramReportToSubscribedChats(text) {
+  const chatIds = await readTelegramChatIds();
+
+  if (!chatIds.length) {
+    throw new Error("No subscribed Telegram chats found in tempDodoBot/chats.json.");
+  }
+
+  const results = await Promise.all(chatIds.map((chatId) => sendTelegramMessage(chatId, text)));
+  return {
+    chatIds,
+    results
+  };
+}
+
+async function sendTelegramPdfToSubscribedChats(fileBuffer, filename, mimeType, caption) {
+  const chatIds = await readTelegramChatIds();
+
+  if (!chatIds.length) {
+    throw new Error("No subscribed Telegram chats found in tempDodoBot/chats.json.");
+  }
+
+  const results = await Promise.all(
+    chatIds.map((chatId) => sendTelegramDocument(chatId, fileBuffer, filename, mimeType, caption))
+  );
+
+  return {
+    chatIds,
+    results
+  };
+}
+
 async function ensureCacheDir() {
   await fs.mkdir(path.dirname(CACHE_PATH), { recursive: true });
 }
@@ -379,6 +539,61 @@ app.get("/api/temperature/daily-report", (req, res) => {
     source: state.source
   });
 });
+
+app.post("/api/temperature/send-telegram-report", async (req, res) => {
+  const dateFrom = typeof req.body?.dateFrom === "string" ? req.body.dateFrom : null;
+  const dateTo = typeof req.body?.dateTo === "string" ? req.body.dateTo : null;
+
+  try {
+    const report = buildDailyReport(dateFrom, dateTo);
+    const text = buildTelegramReportMessage(report);
+    const telegramDelivery = await sendTelegramReportToSubscribedChats(text);
+
+    res.json({
+      success: true,
+      report,
+      telegramMessageId: telegramDelivery.results[0]?.message_id ?? null,
+      deliveredChats: telegramDelivery.chatIds.length
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Telegram send failed";
+    res.status(500).json({ success: false, error: message });
+  }
+});
+
+app.post(
+  "/api/temperature/send-telegram-report-pdf",
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      if (!req.file?.buffer?.length) {
+        res.status(400).json({ success: false, error: "PDF file is required." });
+        return;
+      }
+
+      const dateFrom = typeof req.body?.dateFrom === "string" ? req.body.dateFrom : null;
+      const dateTo = typeof req.body?.dateTo === "string" ? req.body.dateTo : null;
+      const report = buildDailyReport(dateFrom, dateTo);
+      const caption = `Temperature report ${report.dateFrom} - ${report.dateTo}`;
+      const telegramDelivery = await sendTelegramPdfToSubscribedChats(
+        req.file.buffer,
+        req.file.originalname || `temperature-report-${report.dateFrom}-${report.dateTo}.pdf`,
+        req.file.mimetype || "application/pdf",
+        caption
+      );
+
+      res.json({
+        success: true,
+        report,
+        telegramMessageId: telegramDelivery.results[0]?.message_id ?? null,
+        deliveredChats: telegramDelivery.chatIds.length
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Telegram PDF send failed";
+      res.status(500).json({ success: false, error: message });
+    }
+  }
+);
 
 app.post("/api/temperature/sync", async (req, res) => {
   try {
