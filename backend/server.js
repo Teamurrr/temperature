@@ -9,6 +9,7 @@ const multer = require("multer");
 
 const app = express();
 
+const HOST = process.env.HOST || "0.0.0.0";
 const PORT = Number(process.env.PORT || 5000);
 const SENSOR_ID = process.env.SENSOR_ID || "esp32";
 const DATABASE_URL =
@@ -605,9 +606,9 @@ app.post("/api/temperature/sync", async (req, res) => {
   }
 });
 
-app.listen(PORT, async () => {
+app.listen(PORT, HOST, async () => {
   await loadCache();
-  console.log(`Server started on http://localhost:${PORT}`);
+  console.log(`Server started on http://${HOST}:${PORT}`);
 
   try {
     await syncFromFirebase();

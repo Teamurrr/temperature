@@ -137,7 +137,60 @@ const CHART_WIDTH = 1000;
 const CHART_HEIGHT = 280;
 const CHART_PADDING_X = 56;
 const CHART_PADDING_Y = 20;
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const DAY_MS = 24 * 60 * 60 * 1000;
+const HALF_YEAR_MS = DAY_MS * 180;
+const FIREBASE_DATABASE_URL = (
+  import.meta.env.VITE_FIREBASE_DATABASE_URL?.trim() ||
+  "https://temperaturedata-68177-default-rtdb.firebaseio.com"
+).replace(/\/+$/, "");
+const SENSOR_ID = import.meta.env.VITE_SENSOR_ID?.trim() || "esp32";
+
+const isLocalHostname = (hostname: string) => {
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return true;
+  }
+
+  if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
+    return true;
+  }
+
+  if (/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
+    return true;
+  }
+
+  const private172Match = hostname.match(/^172\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/);
+  if (private172Match) {
+    const secondOctet = Number(private172Match[1]);
+    return secondOctet >= 16 && secondOctet <= 31;
+  }
+
+  return false;
+};
+
+const resolveApiBaseUrl = () => {
+  const envBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+  if (envBaseUrl) {
+    return envBaseUrl.replace(/\/+$/, "");
+  }
+
+  if (typeof window === "undefined") {
+    return "http://localhost:5000";
+  }
+
+  const { hostname, protocol } = window.location;
+
+  if (!isLocalHostname(hostname)) {
+    return "";
+  }
+
+  const resolvedProtocol = protocol === "https:" ? "https:" : "http:";
+
+  return `${resolvedProtocol}//${hostname}:5000`;
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
+const HAS_BACKEND_API = API_BASE_URL.length > 0;
 
 const formatUpdatedAt = (value: number | null) => {
   if (!value) {
@@ -331,6 +384,225 @@ const normalizeRange = (range: DateRange | undefined) => {
     : { from: safeTo, to: safeFrom };
 };
 
+const parseIsoDate = (value: unknown) => {
+  if (typeof value !== "string" || !value) {
+    return null;
+  }
+
+  const timestamp = new Date(value).getTime();
+  return Number.isNaN(timestamp) ? null : timestamp;
+};
+
+const getPeriodStart = (period: ReportPeriod) => {
+  const now = new Date();
+
+  switch (period) {
+    case "day":
+      now.setHours(now.getHours() - 24);
+      break;
+    case "week":
+      now.setDate(now.getDate() - 7);
+      break;
+    case "month":
+      now.setDate(now.getDate() - 30);
+      break;
+    case "halfYear":
+      now.setMonth(now.getMonth() - 6);
+      break;
+  }
+
+  return now.getTime();
+};
+
+const formatFirebaseKeyDate = (value: number) =>
+  new Date(value).toISOString().replace(/\.\d{3}Z$/, "Z");
+
+const mapLatestData = (raw: unknown): LatestTemperature => {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const value = raw as Record<string, unknown>;
+
+  return {
+    id: SENSOR_ID,
+    temperature: typeof value.temperature === "number" ? value.temperature : null,
+    unit: "C",
+    sensorId:
+      typeof value.device === "string" && value.device.trim() ? value.device : SENSOR_ID.toUpperCase(),
+    createdAt: parseIsoDate(value.updated_at)
+  };
+};
+
+const mapHistoryPoint = (key: string, raw: unknown): TemperaturePoint | null => {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const value = raw as Record<string, unknown>;
+  const createdAt = parseIsoDate(value.updated_at || key);
+
+  if (!createdAt) {
+    return null;
+  }
+
+  return {
+    temperature: typeof value.temperature === "number" ? value.temperature : null,
+    createdAt,
+    unit: "C",
+    sensorId:
+      typeof value.device === "string" && value.device.trim() ? value.device : SENSOR_ID.toUpperCase()
+  };
+};
+
+const sanitizeHistory = (history: Array<TemperaturePoint | null>) =>
+  history
+    .filter((point): point is TemperaturePoint => Boolean(point && typeof point.createdAt === "number"))
+    .sort((left, right) => left.createdAt - right.createdAt);
+
+const calculateCriticalDurations = (points: TemperaturePoint[], rangeStart: number, rangeEnd: number) => {
+  let coldDurationMs = 0;
+  let hotDurationMs = 0;
+
+  for (let index = 0; index < points.length; index += 1) {
+    const currentPoint = points[index];
+
+    if (!currentPoint || typeof currentPoint.temperature !== "number") {
+      continue;
+    }
+
+    const nextPoint = points[index + 1];
+    const intervalStart = Math.max(currentPoint.createdAt, rangeStart);
+    const intervalEnd = nextPoint ? Math.min(nextPoint.createdAt, rangeEnd) : rangeEnd;
+
+    if (intervalEnd <= intervalStart) {
+      continue;
+    }
+
+    const intervalDuration = intervalEnd - intervalStart;
+
+    if (currentPoint.temperature < TOO_COLD_TEMPERATURE) {
+      coldDurationMs += intervalDuration;
+    } else if (currentPoint.temperature > TOO_HOT_TEMPERATURE) {
+      hotDurationMs += intervalDuration;
+    }
+  }
+
+  return { coldDurationMs, hotDurationMs };
+};
+
+const buildPeriodReport = (period: ReportPeriod, points: TemperaturePoint[]): ReportData => {
+  const from = getPeriodStart(period);
+  const to = Date.now();
+  const filteredPoints = points.filter((point) => point.createdAt >= from);
+  const values = filteredPoints
+    .map((point) => point.temperature)
+    .filter((value): value is number => typeof value === "number");
+
+  return {
+    period,
+    from,
+    to,
+    points: filteredPoints,
+    count: filteredPoints.length,
+    min: values.length ? Math.min(...values) : null,
+    max: values.length ? Math.max(...values) : null
+  };
+};
+
+const buildDateRangeReport = (
+  dateFrom: string,
+  dateTo: string,
+  points: TemperaturePoint[]
+): DailyReport => {
+  const rangeStart = new Date(`${dateFrom}T00:00:00`).getTime();
+  const rangeEnd = new Date(`${dateTo}T00:00:00`).getTime() + DAY_MS;
+  const filteredPoints = points.filter(
+    (point) => point.createdAt >= rangeStart && point.createdAt < rangeEnd
+  );
+  const values = filteredPoints
+    .map((point) => point.temperature)
+    .filter((value): value is number => typeof value === "number");
+  const sum = values.reduce((total, value) => total + value, 0);
+  const { coldDurationMs, hotDurationMs } = calculateCriticalDurations(
+    filteredPoints,
+    rangeStart,
+    rangeEnd
+  );
+
+  return {
+    dateFrom,
+    dateTo,
+    from: rangeStart,
+    to: rangeEnd,
+    count: filteredPoints.length,
+    min: values.length ? Math.min(...values) : null,
+    max: values.length ? Math.max(...values) : null,
+    avg: values.length ? Number((sum / values.length).toFixed(2)) : null,
+    coldDurationMs,
+    hotDurationMs,
+    tooColdThreshold: TOO_COLD_TEMPERATURE,
+    tooHotThreshold: TOO_HOT_TEMPERATURE,
+    points: filteredPoints
+  };
+};
+
+const fetchFirebaseJson = async <T,>(url: string): Promise<T> => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Firebase request failed with status ${response.status}`);
+  }
+
+  return (await response.json()) as T;
+};
+
+const loadTemperatureFromFirebase = async (period: ReportPeriod): Promise<TemperatureApiResponse> => {
+  const historyStart = formatFirebaseKeyDate(Date.now() - HALF_YEAR_MS);
+  const latestUrl = `${FIREBASE_DATABASE_URL}/sensors/${SENSOR_ID}.json`;
+  const historyUrl = `${FIREBASE_DATABASE_URL}/history/${SENSOR_ID}.json?orderBy=${encodeURIComponent(
+    '"$key"'
+  )}&startAt=${encodeURIComponent(JSON.stringify(historyStart))}`;
+
+  const [latestRaw, historyRaw] = await Promise.all([
+    fetchFirebaseJson<unknown>(latestUrl),
+    fetchFirebaseJson<Record<string, unknown> | null>(historyUrl)
+  ]);
+  const history = sanitizeHistory(
+    Object.entries(historyRaw ?? {}).map(([key, value]) => mapHistoryPoint(key, value))
+  );
+
+  return {
+    success: true,
+    latest: mapLatestData(latestRaw),
+    report: buildPeriodReport(period, history),
+    syncedAt: Date.now(),
+    source: "firebase-direct"
+  };
+};
+
+const loadDailyReportFromFirebase = async (
+  dateFrom: string,
+  dateTo: string
+): Promise<DailyReportApiResponse> => {
+  const rangeStart = new Date(`${dateFrom}T00:00:00`).getTime();
+  const historyStart = formatFirebaseKeyDate(Math.max(rangeStart - DAY_MS, Date.now() - HALF_YEAR_MS));
+  const historyUrl = `${FIREBASE_DATABASE_URL}/history/${SENSOR_ID}.json?orderBy=${encodeURIComponent(
+    '"$key"'
+  )}&startAt=${encodeURIComponent(JSON.stringify(historyStart))}`;
+  const historyRaw = await fetchFirebaseJson<Record<string, unknown> | null>(historyUrl);
+  const history = sanitizeHistory(
+    Object.entries(historyRaw ?? {}).map(([key, value]) => mapHistoryPoint(key, value))
+  );
+
+  return {
+    success: true,
+    report: buildDateRangeReport(dateFrom, dateTo, history),
+    syncedAt: Date.now(),
+    source: "firebase-direct"
+  };
+};
+
 const buildReportPdf = async (
   element: HTMLDivElement,
   report: DailyReport
@@ -410,13 +682,17 @@ const Temperature = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/temperature?period=${period}`);
+      const payload = HAS_BACKEND_API
+        ? await (async () => {
+            const response = await fetch(`${API_BASE_URL}/api/temperature?period=${period}`);
 
-      if (!response.ok) {
-        throw new Error("Failed to load temperature data");
-      }
+            if (!response.ok) {
+              throw new Error("Failed to load temperature data");
+            }
 
-      const payload = (await response.json()) as TemperatureApiResponse;
+            return (await response.json()) as TemperatureApiResponse;
+          })()
+        : await loadTemperatureFromFirebase(period);
       setData(payload.latest);
       setReport(payload.report);
       setSourceInfo({ source: payload.source, syncedAt: payload.syncedAt });
@@ -433,15 +709,19 @@ const Temperature = () => {
     setIsReportLoading(true);
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/temperature/daily-report?dateFrom=${encodeURIComponent(dateFrom)}&dateTo=${encodeURIComponent(dateTo)}`
-      );
+      const payload = HAS_BACKEND_API
+        ? await (async () => {
+            const response = await fetch(
+              `${API_BASE_URL}/api/temperature/daily-report?dateFrom=${encodeURIComponent(dateFrom)}&dateTo=${encodeURIComponent(dateTo)}`
+            );
 
-      if (!response.ok) {
-        throw new Error("Failed to load daily report");
-      }
+            if (!response.ok) {
+              throw new Error("Failed to load daily report");
+            }
 
-      const payload = (await response.json()) as DailyReportApiResponse;
+            return (await response.json()) as DailyReportApiResponse;
+          })()
+        : await loadDailyReportFromFirebase(dateFrom, dateTo);
       setDailyReport(payload.report);
       setReportError("");
     } catch {
@@ -481,6 +761,11 @@ const Temperature = () => {
       return;
     }
 
+    if (!HAS_BACKEND_API) {
+      setTelegramStatus("Отправка в Telegram доступна только через отдельный backend.");
+      return;
+    }
+
     setIsSendingTelegramText(true);
     setTelegramStatus("");
 
@@ -516,6 +801,11 @@ const Temperature = () => {
 
   const handleSendTelegramPdfReport = async () => {
     if (!dailyReport || !reportExportRef.current) {
+      return;
+    }
+
+    if (!HAS_BACKEND_API) {
+      setTelegramStatus("Отправка PDF в Telegram доступна только через отдельный backend.");
       return;
     }
 
